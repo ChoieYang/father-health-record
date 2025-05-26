@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>健康數據記錄平台</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Microsoft JhengHei', Arial, sans-serif;
+            background:linear-gradient(135deg,#fff9e6 0%,#ffe4b3 50%,#ffcc80 100%);
+            min-height:100vh; display:flex; justify-content:center; align-items:center;
+            position:relative; overflow-x:hidden; }
+        .bg-decoration { position:absolute; width:100%; height:100%; overflow:hidden; z-index:0; }
+        .circle { position:absolute; border-radius:50%; opacity:0.1; animation:float 6s ease-in-out infinite; }
+        .circle:nth-child(1){width:150px;height:150px;background:#ff8a65;top:10%;left:10%;animation-delay:0s;}
+        .circle:nth-child(2){width:100px;height:100px;background:#ffb74d;top:20%;right:15%;animation-delay:2s;}
+        .circle:nth-child(3){width:80px;height:80px;background:#ffc107;bottom:30%;left:20%;animation-delay:4s;}
+        .circle:nth-child(4){width:120px;height:120px;background:#ff9800;bottom:20%;right:10%;animation-delay:1s;}
+        @keyframes float {0%,100%{transform:translateY(0);}50%{transform:translateY(-20px);} }
+        .container { background:rgba(255,255,255,0.95); padding:2rem; border-radius:20px;
+            box-shadow:0 15px 35px rgba(255,152,0,0.2); max-width:500px; width:90%;
+            position:relative; z-index:1; backdrop-filter:blur(10px); border:2px solid rgba(255,193,7,0.3); }
+        .header { text-align:center; margin-bottom:2rem; }
+        .header h1 { color:#e65100; font-size:2rem; margin-bottom:0.5rem;
+            text-shadow:2px 2px 4px rgba(255,152,0,0.3); }
+        .header p { color:#ff8f00; font-size:1rem; }
+        .login-form, .data-form { display:none; }
+        .login-form.active, .data-form.active { display:block; }
+        .form-group { margin-bottom:1.5rem; }
+        label { display:block; margin-bottom:0.5rem; color:#e65100;
+            font-weight:bold; font-size:1rem; }
+        input, select { width:100%; padding:0.8rem; border:2px solid #ffcc80;
+            border-radius:10px; font-size:1rem; background:rgba(255,248,225,0.8);
+            transition:all 0.3s ease; }
+        input:focus, select:focus { outline:none; border-color:#ff9800;
+            box-shadow:0 0 10px rgba(255,152,0,0.3); background:white; }
+        .radio-group { display:flex; gap:1rem; margin-top:0.5rem; }
+        .radio-option { display:flex; align-items:center; gap:0.5rem;
+            cursor:pointer; padding:0.5rem 1rem; border-radius:10px;
+            background:rgba(255,248,225,0.5); transition:all 0.3s ease; }
+        .radio-option:hover { background:rgba(255,204,128,0.3); }
+        .radio-option input[type="radio"] { width:auto; margin:0; }
+        .btn { width:100%; padding:1rem;
+            background:linear-gradient(135deg,#ff9800 0%,#ff5722 100%);
+            color:white; border:none; border-radius:10px;
+            font-size:1.1rem; font-weight:bold;
+            cursor:pointer; transition:all 0.3s ease;
+            box-shadow:0 5px 15px rgba(255,87,34,0.3); }
+        .btn:hover { transform:translateY(-2px);
+            box-shadow:0 8px 25px rgba(255,87,34,0.4); }
+        .btn:active { transform:translateY(0); }
+        .success-message { display:none; text-align:center;
+            color:#4caf50; font-weight:bold; margin-top:1rem;
+            padding:1rem; background:rgba(76,175,80,0.1);
+            border-radius:10px; border:2px solid rgba(76,175,80,0.3); }
+        .error-message { color:#f44336; font-size:0.9rem; margin-top:0.5rem;
+            display:none; }
+        .logout-btn { position:absolute; top:1rem; right:1rem;
+            background:rgba(255,152,0,0.2); border:1px solid #ff9800;
+            color:#e65100; padding:0.5rem 1rem; border-radius:5px;
+            cursor:pointer; font-size:0.9rem; }
+        .logout-btn:hover { background:rgba(255,152,0,0.3); }
+        /* 新增提示文字樣式：深灰色，字型比標籤小兩號 */
+        .note-text { color:#555555; font-size:0.75rem; }
+        @media (max-width:600px) {
+            .container { padding:1.5rem; margin:1rem; }
+            .header h1 { font-size:1.6rem; }
+            .radio-group { flex-direction:column; gap:0.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-decoration">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+    </div>
+    <div class="container">
+        <button class="logout-btn" onclick="logout()" style="display:none;">登出</button>
+        <div class="header">
+            <h1>🥗 楊爸爸的健康記錄</h1>
+            <p>一天天、一點點，健康長伴你身邊</p>
+        </div>
+        <div class="login-form active">
+            <div class="form-group">
+                <label for="password">請輸入密碼：</label>
+                <input type="password" id="password" placeholder="輸入密碼">
+                <div class="error-message" id="login-error">密碼錯誤，請重試</div>
+            </div>
+            <button class="btn" onclick="login()">登入</button>
+        </div>
+        <div class="data-form">
+            <form onsubmit="submitData(event)">
+                <div class="form-group">
+                    <label for="date">日期：</label>
+                    <input type="date" id="date" required>
+                </div>
+                <div class="form-group">
+                    <label>量測時間點：</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="morning" name="time" value="早晨空腹" required>
+                            <label for="morning"><span class="note-text">🌅 早晨空腹</span></label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="evening" name="time" value="睡前" required>
+                            <label for="evening"><span class="note-text">🌙 睡前</span></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="systolic">收縮壓 (mmHg) <span class="note-text">(正常值：<130)</span>：</label>
+                    <input type="number" id="systolic" min="60" max="250" required>
+                </div>
+                <div class="form-group">
+                    <label for="diastolic">舒張壓 (mmHg) <span class="note-text">(正常值：<85)</span>：</label>
+                    <input type="number" id="diastolic" min="40" max="150" required>
+                </div>
+                <div class="form-group">
+                    <label for="pulse">脈搏 (次/分) <span class="note-text">(理想範圍：60~100)</span>：</label>
+                    <input type="number" id="pulse" min="40" max="200" required>
+                </div>
+                <div class="form-group">
+                    <label for="glucose">血糖 (mg/dL) <span class="note-text">(空腹範圍：70~100，<126)</span>：</label>
+                    <input type="number" id="glucose" min="50" max="500" required>
+                </div>
+                <div class="form-group">
+                    <label for="oxygen">血氧 (%) <span class="note-text">(正常值：>95)</span>：</label>
+                    <input type="number" id="oxygen" min="70" max="100" required>
+                </div>
+                <button type="submit" class="btn">📊 提交數據</button>
+            </form>
+            <div class="success-message" id="success-msg">✅ 數據已成功記錄！</div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', ()=>{
+            document.getElementById('date').value=new Date().toISOString().split('T')[0];
+        });
+        function login(){
+            const pw=document.getElementById('password').value;
+            const err=document.getElementById('login-error');
+            if(pw==='healthy0807'){
+                document.querySelector('.login-form').classList.remove('active');
+                document.querySelector('.data-form').classList.add('active');
+                document.querySelector('.logout-btn').style.display='block';
+                err.style.display='none';
+            }else{err.style.display='block';document.getElementById('password').value='';}
+        }
+        function logout(){
+            document.querySelector('.data-form').classList.remove('active');
+            document.querySelector('.login-form').classList.add('active');
+            document.querySelector('.logout-btn').style.display='none';
+            document.getElementById('password').value='';
+            document.querySelector('.data-form form').reset();
+            document.getElementById('date').value=new Date().toISOString().split('T')[0];
+            document.getElementById('success-msg').style.display='none';
+        }
+        function submitData(e){
+            e.preventDefault();
+            const [y,m,d]=document.getElementById('date').value.split('-');
+            const data=new URLSearchParams();
+            data.append('entry.83801040_year',y);
+            data.append('entry.83801040_month',m);
+            data.append('entry.83801040_day',d);
+            data.append('entry.1476934331',document.querySelector('input[name="time"]:checked').value);
+            data.append('entry.719798047',document.getElementById('systolic').value);
+            data.append('entry.730431022',document.getElementById('diastolic').value);
+            data.append('entry.97271527',document.getElementById('pulse').value);
+            data.append('entry.1740844743',document.getElementById('glucose').value);
+            data.append('entry.1746074270',document.getElementById('oxygen').value);
+            fetch('https://docs.google.com/forms/d/e/1FAIpQLScHmncHyxutmZ47upym2CMTidDfPyH6F6_xtxJl3ZusrAIj3A/formResponse',{method:'POST',mode:'no-cors',body:data});
+            const msg=document.getElementById('success-msg');msg.style.display='block';
+            document.querySelector('.data-form form').reset();
+            document.getElementById('date').value=new Date().toISOString().split('T')[0];
+            setTimeout(()=>{msg.style.display='none';},3000);
+        }
+        document.getElementById('password').addEventListener('keypress',e=>{if(e.key==='Enter')login();});
+    </script>
+</body>
+</html>
