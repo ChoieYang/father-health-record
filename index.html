@@ -83,15 +83,19 @@
             <h1>🥗 楊爸爸的健康記錄</h1>
             <p>一天天、一點點，健康長伴你身邊</p>
         </div>
+        <!-- 登入按鈕區 -->
         <div class="login-form active">
+             /* 
             <div class="form-group">
                 <label for="password">請輸入密碼：</label>
                 <input type="password" id="password" placeholder="輸入密碼">
                 <div class="error-message" id="login-error">密碼錯誤，請重試</div>
             </div>
+            */
             <button class="btn" onclick="login()">登入</button>
             <p class="footer-note">Co-created by C-Y Yang and ChatGPT (2025)</p>
         </div>
+         <!-- 資料輸入區 -->
         <div class="data-form">
             <form onsubmit="submitData(event)">
                 <div class="form-group">
@@ -138,17 +142,24 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', ()=>{
+            // 預設今日日期
             document.getElementById('date').value=new Date().toISOString().split('T')[0];
         });
         function login(){
+            // 點擊登入直接進入，不需要密碼驗證
+            document.querySelector('.login-form').classList.remove('active');
+            document.querySelector('.data-form').classList.add('active');
+            document.querySelector('.logout-btn').style.display='block';
+            /*
             const pw=document.getElementById('password').value;
             const err=document.getElementById('login-error');
-            if(pw==='jd430807'){
+            if(pw==='yourpwd'){
                 document.querySelector('.login-form').classList.remove('active');
                 document.querySelector('.data-form').classList.add('active');
                 document.querySelector('.logout-btn').style.display='block';
                 err.style.display='none';
             }else{err.style.display='block';document.getElementById('password').value='';}
+            */
         }
         function logout(){
             document.querySelector('.data-form').classList.remove('active');
