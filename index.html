@@ -85,17 +85,15 @@
         </div>
         <!-- 登入按鈕區 -->
         <div class="login-form active">
-             /* 
-            <div class="form-group">
-                <label for="password">請輸入密碼：</label>
-                <input type="password" id="password" placeholder="輸入密碼">
-                <div class="error-message" id="login-error">密碼錯誤，請重試</div>
-            </div>
-            */
+            //<div class="form-group">
+            //    <label for="password">請輸入密碼：</label>
+            //    <input type="password" id="password" placeholder="輸入密碼">
+            //    <div class="error-message" id="login-error">密碼錯誤，請重試</div>
+            //</div>
             <button class="btn" onclick="login()">登入</button>
             <p class="footer-note">Co-created by C-Y Yang and ChatGPT (2025)</p>
         </div>
-         <!-- 資料輸入區 -->
+        <!-- 資料輸入區 -->
         <div class="data-form">
             <form onsubmit="submitData(event)">
                 <div class="form-group">
@@ -150,16 +148,14 @@
             document.querySelector('.login-form').classList.remove('active');
             document.querySelector('.data-form').classList.add('active');
             document.querySelector('.logout-btn').style.display='block';
-            /*
-            const pw=document.getElementById('password').value;
-            const err=document.getElementById('login-error');
-            if(pw==='yourpwd'){
-                document.querySelector('.login-form').classList.remove('active');
-                document.querySelector('.data-form').classList.add('active');
-                document.querySelector('.logout-btn').style.display='block';
-                err.style.display='none';
-            }else{err.style.display='block';document.getElementById('password').value='';}
-            */
+            //const pw=document.getElementById('password').value;
+            //const err=document.getElementById('login-error');
+            //if(pw==='yourpwd'){
+            //    document.querySelector('.login-form').classList.remove('active');
+            //    document.querySelector('.data-form').classList.add('active');
+            //    document.querySelector('.logout-btn').style.display='block';
+            //    err.style.display='none';
+            //}else{err.style.display='block';document.getElementById('password').value='';}
         }
         function logout(){
             document.querySelector('.data-form').classList.remove('active');
